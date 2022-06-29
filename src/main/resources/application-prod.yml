@@ -1,0 +1,10 @@
+zone-parameters:
+  syncTime: ${SYNC_TIME}
+
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASS}
+    hikari:
+      maximum-pool-size: 4

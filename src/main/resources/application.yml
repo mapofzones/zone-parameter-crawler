@@ -1,0 +1,26 @@
+endpoint:
+  inflation: '/cosmos/mint/v1beta1/inflation'
+  validators-quantity: '/validatorsets/latest'
+  validators-quantity-extra: '/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.count_total=true'
+  amount-of-bonded: '/cosmos/staking/v1beta1/pool'
+  unbound-period: '/cosmos/staking/v1beta1/params'
+  supply: '/cosmos/bank/v1beta1/supply/%s'
+
+spring:
+  main:
+    web-application-type: none
+
+  jpa:
+    open-in-view: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+    hibernate:
+      ddl-auto: validate
+
+    properties:
+      hibernate:
+        schema_update:
+          unique_constraint_strategy: RECREATE_QUIETLY
+        jdbc:
+          lob:
+            non_contextual_creation: true

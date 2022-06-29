@@ -1,0 +1,10 @@
+zone-parameters:
+  syncTime: 20s
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/moz_db
+    username: postgres
+    password: postgres
+    hikari:
+      maximum-pool-size: 4
