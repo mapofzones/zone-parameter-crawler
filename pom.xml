@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.mapofzones</groupId>
 	<artifactId>zone-parameter-crawler</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>zone-parameter-crawler</name>
 	<description>MoZ zone-parameter-crawler</description>
 	<properties>
