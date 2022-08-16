@@ -1,5 +1,8 @@
 # zone-parameter-crawler
 
+Status of Last Deployment:<br>
+<img src="https://github.com/mapofzones/zone-parameter-crawler/workflows/Java%20CI/badge.svg"><br>
+
 Running directly:
 * java 11
 * maven
