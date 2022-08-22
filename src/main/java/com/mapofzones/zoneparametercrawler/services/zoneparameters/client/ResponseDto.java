@@ -1,4 +1,4 @@
-package com.mapofzones.zoneparametercrawler.service.zoneparameters.client;
+package com.mapofzones.zoneparametercrawler.services.zoneparameters.client;
 
 public class ResponseDto {
 

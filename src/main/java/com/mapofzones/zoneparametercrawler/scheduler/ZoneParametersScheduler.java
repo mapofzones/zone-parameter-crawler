@@ -1,6 +1,6 @@
 package com.mapofzones.zoneparametercrawler.scheduler;
 
-import com.mapofzones.zoneparametercrawler.service.ZoneParametersFacade;
+import com.mapofzones.zoneparametercrawler.services.ZoneParametersFacade;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

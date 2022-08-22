@@ -20,7 +20,7 @@ spring:
     properties:
       hibernate:
         schema_update:
-          unique_constraint_strategy: RECREATE_QUIETLY
+          unique_constraint_strategy: SKIP
         jdbc:
           lob:
             non_contextual_creation: true

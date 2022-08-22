@@ -1,4 +1,4 @@
-package com.mapofzones.zoneparametercrawler.service.zoneparameters;
+package com.mapofzones.zoneparametercrawler.services.zoneparameters;
 
 import com.mapofzones.zoneparametercrawler.domain.ZoneParameters;
 

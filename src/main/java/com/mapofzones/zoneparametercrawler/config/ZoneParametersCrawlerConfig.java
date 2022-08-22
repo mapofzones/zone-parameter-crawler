@@ -1,8 +1,8 @@
 package com.mapofzones.zoneparametercrawler.config;
 
 import com.mapofzones.zoneparametercrawler.common.properties.BaseProperties;
-import com.mapofzones.zoneparametercrawler.common.properties.EndpointProperties;
-import com.mapofzones.zoneparametercrawler.service.zoneparameters.client.LcdClient;
+import com.mapofzones.zoneparametercrawler.common.properties.EndpointsProperties;
+import com.mapofzones.zoneparametercrawler.services.zoneparameters.client.RestClient;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,8 +16,8 @@ import java.time.Duration;
 public class ZoneParametersCrawlerConfig {
 
     @Bean
-    public EndpointProperties endpointProperties() {
-        return new EndpointProperties();
+    public EndpointsProperties endpointProperties() {
+        return new EndpointsProperties();
     }
 
     @Bean
@@ -26,18 +26,18 @@ public class ZoneParametersCrawlerConfig {
     }
 
     @Bean
-    public RestTemplate lcdClientRestTemplate(RestTemplateBuilder restTemplateBuilder) {
+    public RestTemplate restClientRestTemplate(RestTemplateBuilder restTemplateBuilder) {
         return restTemplateBuilder
                 .additionalMessageConverters(new StringHttpMessageConverter(StandardCharsets.UTF_8))
-                .setConnectTimeout(Duration.ofSeconds(5))
-                .setReadTimeout(Duration.ofSeconds(5))
+                .setConnectTimeout(Duration.ofSeconds(2))
+                .setReadTimeout(Duration.ofSeconds(2))
                 .build();
     }
 
     @Bean
-    public LcdClient lcdClient(RestTemplate lcdClientRestTemplate,
-                               EndpointProperties endpointProperties) {
-        return new LcdClient(lcdClientRestTemplate, endpointProperties);
+    public RestClient restClient(RestTemplate restClientRestTemplate,
+                                 EndpointsProperties endpointsProperties) {
+        return new RestClient(restClientRestTemplate, endpointsProperties);
     }
 
 }

@@ -1,6 +1,6 @@
 package com.mapofzones.zoneparametercrawler.domain;
 
-import com.mapofzones.zoneparametercrawler.service.zoneparameters.client.ZoneParametersDto;
+import com.mapofzones.zoneparametercrawler.services.zoneparameters.client.ZoneParametersDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

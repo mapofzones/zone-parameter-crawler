@@ -1,4 +1,4 @@
-package com.mapofzones.zoneparametercrawler.service.zoneparameters;
+package com.mapofzones.zoneparametercrawler.services.zoneparameters;
 
 import com.mapofzones.zoneparametercrawler.domain.ZoneParameters;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,6 +19,4 @@ public interface ZoneParametersRepository extends JpaRepository<ZoneParameters, 
             "INSERT INTO zone_parameters (ZONE, DATETIME, ACTIVE_VALIDATORS_QUANTITY, INFLATION, AMOUNT_OF_BONDED, UNBOUND_PERIOD) " +
             "VALUES (?1, ?2, ?3, ?4, ?5, ?6) ON CONFLICT DO NOTHING", nativeQuery = true)
     void saveAll(String zone, LocalDateTime datetime, Integer activeValidatorsQuantity, BigDecimal inflation, BigInteger amountOfBonded, Integer unboundPeriod);
-    Optional<LocalDateTime> getFirstByZoneParametersId_ZoneOrderByZoneParametersId_DatetimeDesc(String zone);
-
 }

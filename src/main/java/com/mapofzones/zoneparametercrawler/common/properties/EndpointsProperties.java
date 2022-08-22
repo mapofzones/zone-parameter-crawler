@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Getter
 @Setter
 @ConfigurationProperties(prefix = "endpoint")
-public class EndpointProperties {
+public class EndpointsProperties {
 
     private String inflation;
     private String validatorsQuantity;

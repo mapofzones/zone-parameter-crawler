@@ -19,7 +19,4 @@ public class Zone {
     @Id
     @Column(name = "chain_id")
     private String chainId;
-
-    @Column(name = "IS_ENABLED")
-    private Boolean enabled;
 }

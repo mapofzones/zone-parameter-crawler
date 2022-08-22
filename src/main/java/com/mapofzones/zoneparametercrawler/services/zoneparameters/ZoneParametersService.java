@@ -1,15 +1,13 @@
-package com.mapofzones.zoneparametercrawler.service.zoneparameters;
+package com.mapofzones.zoneparametercrawler.services.zoneparameters;
 
 import com.mapofzones.zoneparametercrawler.domain.ZoneParameters;
-import com.mapofzones.zoneparametercrawler.service.zoneparameters.client.LcdClient;
-import com.mapofzones.zoneparametercrawler.service.zoneparameters.client.ZoneParametersDto;
+import com.mapofzones.zoneparametercrawler.services.zoneparameters.client.RestClient;
+import com.mapofzones.zoneparametercrawler.services.zoneparameters.client.ZoneParametersDto;
 import com.mapofzones.zoneparametercrawler.utils.TimeHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,12 +16,12 @@ import java.util.List;
 public class ZoneParametersService implements IZoneParametersService {
 
     private final ZoneParametersRepository zoneParametersRepository;
-    private final LcdClient lcdClient;
+    private final RestClient restClient;
 
     public ZoneParametersService(ZoneParametersRepository zoneParametersRepository,
-                                 LcdClient lcdClient) {
+                                 RestClient restClient) {
         this.zoneParametersRepository = zoneParametersRepository;
-        this.lcdClient = lcdClient;
+        this.restClient = restClient;
     }
 
     @Override
@@ -40,17 +38,12 @@ public class ZoneParametersService implements IZoneParametersService {
         zoneParametersId.setZone(zone);
         zoneParametersId.setDatetime(TimeHelper.nowAroundHours());
 
-        ZoneParametersDto foundZoneParameters = lcdClient.findParameters(address);
+        ZoneParametersDto foundZoneParameters = restClient.findParameters(address);
 
         ZoneParameters zoneParameters = new ZoneParameters(foundZoneParameters);
         zoneParameters.setZoneParametersId(zoneParametersId);
         zoneParametersList.add(zoneParameters);
 
         return zoneParametersList;
-    }
-
-    private long getCountOfMissedEntries(LocalDateTime dateTime) {
-        LocalDateTime nowAroundHour = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS);
-        return ChronoUnit.HOURS.between(dateTime, nowAroundHour);
     }
 }

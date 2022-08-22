@@ -1,5 +1,5 @@
 zone-parameters:
-  syncTime: 20s
+  syncTime: 10s
 
 spring:
   datasource:
