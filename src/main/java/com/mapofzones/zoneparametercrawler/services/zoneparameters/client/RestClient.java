@@ -73,7 +73,7 @@ public class RestClient {
         Runnable doWork = () -> validatorAddresses.stream().parallel().forEach(vAddr -> {
             List<String> amount1 = (List<String>) callApi(addresses,
                     String.format(endpointsProperties.getDelegations(), vAddr),
-                    "delegation_responses/balance/amount", true, 2).orElse(null);
+                    "delegation_responses/balance/amount", true, 3).orElse(null);
             delegationsAddressesOfActiveValidatorsMap.put(vAddr, amount1);
             iter.getAndIncrement();
         });

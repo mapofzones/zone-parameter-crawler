@@ -95,7 +95,7 @@ public class ZoneParametersFacade implements IZoneParametersFacade {
     }
 
     protected void findZoneParameters(Runnable function) {
-        ForkJoinPool forkJoinPool = new ForkJoinPool(10);
+        ForkJoinPool forkJoinPool = new ForkJoinPool(15);
 
         try {
             forkJoinPool.submit(function).get();

@@ -12,7 +12,7 @@ public interface ZoneRepository extends JpaRepository<Zone, String> {
             "JOIN zone_nodes zn on z.chain_id = zn.zone and z.chain_id = zone " +
             "    WHERE z.chain_id = ?1 " +
             "        AND zn.last_block_height is not null " +
-            "        AND zn.is_lcd_addr_active = true order by zn.last_block_height DESC LIMIT 1", nativeQuery = true)
+            "        AND zn.is_lcd_addr_active = true order by zn.last_block_height DESC LIMIT 5", nativeQuery = true)
     List<String> findRestAddressesWithHightestBlockByChainId(String chainId);
 
     List<Zone> getZoneByIsMainnetTrue();
