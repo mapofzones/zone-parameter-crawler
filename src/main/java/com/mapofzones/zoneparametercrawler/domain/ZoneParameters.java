@@ -4,6 +4,7 @@ import com.mapofzones.zoneparametercrawler.services.zoneparameters.client.ZonePa
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
@@ -15,10 +16,13 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
-@Data
+@Getter
 @Entity
 @NoArgsConstructor
+@EqualsAndHashCode(of = {"zoneParametersId"})
 @Table(name = "ZONE_PARAMETERS")
 public class ZoneParameters {
 
@@ -51,10 +55,37 @@ public class ZoneParameters {
     @Column(name = "UNBOUND_PERIOD")
     private Integer unboundPeriod;
 
-    public ZoneParameters(ZoneParametersDto zoneParametersDto) {
+    @Column(name = "DELEGATION_AMOUNT")
+    private BigDecimal delegationAmount;
+
+    public ZoneParameters(ZoneParametersId zoneParametersId) {
+        this.zoneParametersId = zoneParametersId;
+    }
+
+    public void setBaseZoneParameters(ZoneParametersDto zoneParametersDto) {
         this.activeValidatorsQuantity = zoneParametersDto.getActiveValidators();
         this.amountOfBonded = zoneParametersDto.getBondedTokens() != null ? new BigInteger(zoneParametersDto.getBondedTokens()) : null;
         this.inflation = zoneParametersDto.getInflation() != null ? BigDecimal.valueOf(zoneParametersDto.getInflation()) : null;
-        this.unboundPeriod = zoneParametersDto.getUnboundPeriod() != null ? Integer.parseInt(zoneParametersDto.getUnboundPeriod().replaceAll("\\D", "")) : null ;
+        this.unboundPeriod = zoneParametersDto.getUnboundPeriod() != null ? Integer.parseInt(zoneParametersDto.getUnboundPeriod().replaceAll("\\D", "")) : null;
+    }
+
+    public void setDelegationsAmount(ZoneParametersDto zoneParametersDto) {
+        if (validateValidatorDelegationMap(zoneParametersDto.getValidatorDelegationMap(), zoneParametersDto.getActiveValidators())) {
+            this.delegationAmount = delegationAmountCalculation(zoneParametersDto.getValidatorDelegationMap());
+        }
+    }
+
+    private BigDecimal delegationAmountCalculation(Map<String, List<String>> validatorDelegationMap) {
+        double totalAmount = 0D;
+        for (Map.Entry<String, List<String>> entry : validatorDelegationMap.entrySet())
+            if (entry.getValue() != null)
+                for (String amount : entry.getValue())
+                    totalAmount += Double.parseDouble(amount);
+        return BigDecimal.valueOf(totalAmount);
+    }
+
+    private boolean validateValidatorDelegationMap(Map<String, List<String>> validatorDelegationMap, Integer activeValidators) {
+        return (validatorDelegationMap != null && !validatorDelegationMap.isEmpty()) &&
+                (activeValidators != null && validatorDelegationMap.size() == activeValidators);
     }
 }

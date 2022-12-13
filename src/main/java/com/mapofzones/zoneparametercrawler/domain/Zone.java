@@ -19,4 +19,7 @@ public class Zone {
     @Id
     @Column(name = "chain_id")
     private String chainId;
+
+    @Column(name = "is_mainnet")
+    private Boolean isMainnet;
 }

@@ -4,14 +4,21 @@ import com.mapofzones.zoneparametercrawler.domain.Zone;
 import com.mapofzones.zoneparametercrawler.domain.ZoneParameters;
 import com.mapofzones.zoneparametercrawler.services.zone.ZoneRepository;
 import com.mapofzones.zoneparametercrawler.services.zoneparameters.IZoneParametersService;
+import com.mapofzones.zoneparametercrawler.utils.TimeHelper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
-@Component
-public class ZoneParametersFacade {
+public class ZoneParametersFacade implements IZoneParametersFacade {
 
     private final IZoneParametersService zoneParametersService;
     private final ZoneRepository zoneRepository;
@@ -22,19 +29,81 @@ public class ZoneParametersFacade {
         this.zoneRepository = zoneRepository;
     }
 
-    public void findZoneParameters() {
-        log.info("Start...");
+    @Async
+    @Transactional
+    public void createEmptyZoneParameters() {
+        log.info("Start CreateEmptyZoneParameters...");
+        List<Zone> zones = zoneRepository.getZoneByIsMainnetTrue();
+        List<ZoneParameters> zoneParameters = new ArrayList<>();
 
-        List<Zone> zones = zoneRepository.findAll();
+        zones.forEach(zone -> {
+            ZoneParameters.ZoneParametersId zoneParametersId = new ZoneParameters.ZoneParametersId();
+            zoneParametersId.setZone(zone.getChainId());
+            zoneParametersId.setDatetime(TimeHelper.nowAroundHours());
+            zoneParameters.add(new ZoneParameters(zoneParametersId));
 
-        for (Zone zone : zones) {
-            String address = zoneRepository.findRestAddressWithHightestBlockByChainId(zone.getChainId());
-            if (address != null) {
-                List<ZoneParameters> foundZoneParameters = zoneParametersService.findZoneParametersFromAddress(zone.getChainId(), address);
-                zoneParametersService.saveAll(foundZoneParameters);
-            }
-        }
-
-        log.info("Finish...");
+        });
+        zoneParametersService.saveAll(zoneParameters);
+        log.info("Finish CreateEmptyZoneParameters...");
     }
+
+    @Async
+    public void findBaseZoneParameters() {
+        List<ZoneParameters> zoneParameters = zoneParametersService.findEmptyZoneParameters();
+        log.info("Start FindBaseZoneParameters...");
+
+        Map<ZoneParameters, List<String>> zoneParametersAddressesMap = zoneParameters.stream()
+                .collect(Collectors.toConcurrentMap(Function.identity(), key ->
+                        zoneRepository.findRestAddressesWithHightestBlockByChainId(key.getZoneParametersId().getZone())));
+
+        Runnable getBaseZoneParametersTask = () -> zoneParametersAddressesMap.entrySet().stream().parallel().forEach(entry -> {
+            if (!entry.getValue().isEmpty()) {
+                log.info("FindBaseZoneParameters: Started: " + entry.getKey().getZoneParametersId().getZone());
+                zoneParametersService.findBaseZoneParametersFromAddresses(entry.getKey(), entry.getValue());
+                log.info("FindBaseZoneParameters: FINISHED: " + entry.getKey().getZoneParametersId().getZone());
+            }
+        });
+
+        findZoneParameters(getBaseZoneParametersTask);
+        zoneParametersService.saveBaseParameters(zoneParameters);
+        log.info("Finish FindBaseZoneParameters...");
+    }
+
+    @Async
+    public void findDelegationsAmount() {
+        List<ZoneParameters> zoneParameters = zoneParametersService.findEmptyZoneParameters();
+        log.info("Start FindDelegationsAmount...");
+
+        Map<ZoneParameters, List<String>> zoneParametersAddressesMap = zoneParameters.stream()
+                .collect(Collectors.toConcurrentMap(Function.identity(), key ->
+                        zoneRepository.findRestAddressesWithHightestBlockByChainId(key.getZoneParametersId().getZone())));
+
+        Runnable getBaseZoneParametersTask = () -> zoneParametersAddressesMap.entrySet().stream().parallel().forEach(entry -> {
+            if (!entry.getValue().isEmpty()) {
+                log.info("FindDelegationsAmount: Started: " + entry.getKey().getZoneParametersId().getZone());
+                if (entry.getKey() != null && entry.getValue() != null)
+                    zoneParametersService.findDelegationsAmountFromAddresses(entry.getKey(), entry.getValue());
+                log.info("FindDelegationsAmount: FINISHED: " + entry.getKey().getZoneParametersId().getZone());
+            }
+        });
+
+        findZoneParameters(getBaseZoneParametersTask);
+        zoneParametersService.saveDelegationAmount(zoneParameters);
+        log.info("Finish FindDelegationsAmount...");
+
+
+    }
+
+    protected void findZoneParameters(Runnable function) {
+        ForkJoinPool forkJoinPool = new ForkJoinPool(10);
+
+        try {
+            forkJoinPool.submit(function).get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            forkJoinPool.shutdown();
+        }
+    }
+
 }

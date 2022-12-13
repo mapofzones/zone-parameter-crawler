@@ -9,14 +9,22 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.List;
 
 @Repository
 public interface ZoneParametersRepository extends JpaRepository<ZoneParameters, ZoneParameters.ZoneParametersId> {
 
     @Modifying
-    @Query(value =
-            "INSERT INTO zone_parameters (ZONE, DATETIME, ACTIVE_VALIDATORS_QUANTITY, INFLATION, AMOUNT_OF_BONDED, UNBOUND_PERIOD) " +
-            "VALUES (?1, ?2, ?3, ?4, ?5, ?6) ON CONFLICT DO NOTHING", nativeQuery = true)
-    void saveAll(String zone, LocalDateTime datetime, Integer activeValidatorsQuantity, BigDecimal inflation, BigInteger amountOfBonded, Integer unboundPeriod);
+    @Query(value = "UPDATE zone_parameters SET active_validators_quantity = ?3, inflation =?4, amount_of_bonded = ?5, unbound_period = ?6 " +
+            "WHERE zone = ?1 AND datetime = ?2", nativeQuery = true)
+    void saveBaseParameters(String zone, LocalDateTime dateTime, Integer activeValidatorsQuantity,
+                            BigDecimal inflation, BigInteger amountOfBonded, Integer unboundPeriod);
+
+    @Modifying
+    @Query(value = "UPDATE zone_parameters SET delegation_amount = ?3 WHERE zone = ?1 AND datetime = ?2", nativeQuery = true)
+    void saveDelegationAmount(String zone, LocalDateTime dateTime, BigDecimal delegationAmount);
+
+    @Query(value = "select * from zone_parameters zp where zp.datetime = " +
+            "(select zp1.datetime from zone_parameters zp1 ORDER BY zp1.datetime DESC LIMIT 1)", nativeQuery = true)
+    List<ZoneParameters> findEmptyZoneParameters();
 }

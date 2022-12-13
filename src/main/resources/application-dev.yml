@@ -3,8 +3,8 @@ zone-parameters:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/moz_db
-    username: postgres
-    password: postgres
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/moz_db}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASS:postgres}
     hikari:
       maximum-pool-size: 4

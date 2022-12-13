@@ -7,6 +7,10 @@ import java.util.List;
 public interface IZoneParametersService {
 
     void saveAll(List<ZoneParameters> zoneParameters);
+    void saveBaseParameters(List<ZoneParameters> zoneParameters);
+    void saveDelegationAmount(List<ZoneParameters> zoneParameters);
 
-    List<ZoneParameters> findZoneParametersFromAddress(String zone, String address);
+    List<ZoneParameters> findEmptyZoneParameters();
+    void findBaseZoneParametersFromAddresses(ZoneParameters zoneParameters, List<String> addresses);
+    void findDelegationsAmountFromAddresses(ZoneParameters zoneParameters, List<String> addresses);
 }

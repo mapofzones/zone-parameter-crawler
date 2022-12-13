@@ -11,10 +11,11 @@ public class EndpointsProperties {
 
     private String inflation;
     private String validatorsQuantity;
-    private String validatorsQuantityExtra;
+    private String validatorList;
     private String amountOfBonded;
     private String stakingApr;
     private String unboundPeriod;
     private String supply;
+    private String delegations;
 
 }
