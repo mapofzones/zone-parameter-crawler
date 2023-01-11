@@ -32,4 +32,16 @@ public class ZoneParametersScheduler {
     public void callFindDelegationsAmount() {
         this.zoneParametersFacadeProxy.findDelegationsAmount();
     }
+
+    @Scheduled(cron = "0 3 * * * *")
+//    @Scheduled(fixedDelayString = "3600000", initialDelay = 5000)
+    public void callFindUndelegationsAmount() {
+        this.zoneParametersFacadeProxy.findUndelegationsAmount();
+    }
+
+    @Scheduled(cron = "0 4 * * * *")
+//    @Scheduled(fixedDelayString = "3600000", initialDelay = 5000)
+    public void callFindDelegatorAddressesCount() {
+        this.zoneParametersFacadeProxy.findDelegatorAddressesCount();
+    }
 }

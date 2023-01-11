@@ -56,8 +56,20 @@ public class ZoneParametersService implements IZoneParametersService {
 
     @Override
     public void findDelegationsAmountFromAddresses(ZoneParameters zoneParameters, List<String> addresses) {
-        ZoneParametersDto foundZoneParameters = restClient.findDelegations(addresses);
-        zoneParameters.setDelegationsAmount(foundZoneParameters);
+        ZoneParametersDto foundZoneParameters = restClient.findDelegatorShares(addresses);
+        zoneParameters.setValidatorsShares(foundZoneParameters);
+    }
+
+    @Override
+    public void findUndelegationsAmountFromAddresses(ZoneParameters zoneParameters, List<String> addresses) {
+        ZoneParametersDto foundZoneParameters = restClient.findUndelegations(addresses);
+        zoneParameters.setUndelegationsAmount(foundZoneParameters);
+    }
+
+    @Override
+    public void findDelegatorAddressesCountFromAddresses(ZoneParameters zoneParameters, List<String> addresses) {
+        ZoneParametersDto foundZoneParameters = restClient.findDelegatorAddresses(addresses);
+        zoneParameters.setDelegatorAddressesCount(foundZoneParameters);
     }
 
 }

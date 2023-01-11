@@ -1,14 +1,20 @@
 package com.mapofzones.zoneparametercrawler.services.zoneparameters.client;
 
 import com.mapofzones.zoneparametercrawler.AbstractTest;
+import com.mapofzones.zoneparametercrawler.config.RestClientConfig;
 import com.mapofzones.zoneparametercrawler.config.TestConfig;
 import com.mapofzones.zoneparametercrawler.config.ZoneParametersCrawlerConfig;
+import com.mapofzones.zoneparametercrawler.domain.ZoneParameters;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.util.List;
+import java.util.Map;
+
 @AutoConfigureWebClient
-@ContextConfiguration(classes = {ZoneParametersCrawlerConfig.class, TestConfig.class})
+@ContextConfiguration(classes = {RestClientConfig.class, TestConfig.class})
 class RestClientTest extends AbstractTest {
 
     @Autowired
@@ -67,7 +73,44 @@ class RestClientTest extends AbstractTest {
 //        "http://65.108.111.200:1317"
 //        );
 //
-//        Map<String, List<String>> result = restClient.findDelegationsAddressesOfActiveValidators(addresses);
-//        System.out.println(result);
+//        ZoneParametersDto dto = restClient.findDelegations(addresses);
+//        System.out.println(dto);
 //    }
+
+//    @Test
+//    void find() {
+//        ZoneParametersDto dto = restClient.findDelegations(List.of("https://api.jackalprotocol.com"));
+//        ZoneParameters zp = new ZoneParameters(new ZoneParameters.ZoneParametersId());
+//        zp.setDelegationsAmount(dto);
+//
+//        System.out.println();
+//    }
+
+//    @Test
+//    void findDelegations() {
+//        ZoneParametersDto dto = restClient.findDelegatorShares(List.of("http://46.4.28.38:1317"));
+//        ZoneParameters zp = new ZoneParameters(new ZoneParameters.ZoneParametersId());
+//        zp.setValidatorsShares(dto);
+//
+//        System.out.println();
+//    }
+//
+//    @Test
+//    void findUnDelegations() {
+//        ZoneParametersDto dto = restClient.findUndelegations(List.of("http://46.4.28.38:1317"));
+//        ZoneParameters zp = new ZoneParameters(new ZoneParameters.ZoneParametersId());
+//        zp.setUndelegationsAmount(dto);
+//
+//        System.out.println();
+//    }
+//
+//    @Test
+//    void findDelegatorAddresses() {
+//        ZoneParametersDto dto = restClient.findDelegatorAddresses(List.of("http://142.132.154.144:1317"));
+//        ZoneParameters zp = new ZoneParameters(new ZoneParameters.ZoneParametersId());
+//        zp.setDelegatorAddressesCount(dto);
+//
+//        System.out.println();
+//    }
+
 }

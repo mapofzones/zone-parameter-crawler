@@ -10,12 +10,14 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
@@ -38,15 +40,42 @@ public class RestClient {
         return zoneParametersDto;
     }
 
-    public ZoneParametersDto findDelegations(List<String> addresses) {
+    public ZoneParametersDto findDelegatorAddresses(List<String> addresses) {
         ZoneParametersDto zoneParametersDto = new ZoneParametersDto();
         zoneParametersDto.setActiveValidators(findActiveValidatorsQuantity(addresses));
 
         List<String> findValidatorsAddresses = findValidatorsAddresses(addresses);
 
         if (findValidatorsAddresses != null)
-            zoneParametersDto.setValidatorDelegationMap(findDelegationsAddressesOfActiveValidators(addresses, findValidatorsAddresses));
-        else zoneParametersDto.setValidatorDelegationMap(new HashMap<>());
+            zoneParametersDto.setDelegatorAddresses(findDelegatorAddressesOfActiveValidators(addresses, findValidatorsAddresses));
+        else zoneParametersDto.setDelegatorAddresses(new HashSet<>());
+
+        return zoneParametersDto;
+    }
+
+    public ZoneParametersDto findDelegatorShares(List<String> addresses) {
+
+        ZoneParametersDto zoneParametersDto = new ZoneParametersDto();
+        zoneParametersDto.setActiveValidators(findActiveValidatorsQuantity(addresses));
+
+        List<String> findValidatorsAddresses = findValidatorsAddresses(addresses);
+
+        if (findValidatorsAddresses != null) {
+            zoneParametersDto.setDelegatorShares(findDelegatorSharesOfActiveValidators(addresses, findValidatorsAddresses));
+        } else zoneParametersDto.setDelegatorShares(new HashMap<>());
+
+        return zoneParametersDto;
+    }
+
+    public ZoneParametersDto findUndelegations(List<String> addresses) {
+        ZoneParametersDto zoneParametersDto = new ZoneParametersDto();
+        zoneParametersDto.setActiveValidators(findActiveValidatorsQuantity(addresses));
+
+        List<String> findValidatorsAddresses = findValidatorsAddresses(addresses);
+
+        if (findValidatorsAddresses != null)
+            zoneParametersDto.setValidatorUndelegationMap(findUndelegationsAddressesOfActiveValidators(addresses, findValidatorsAddresses));
+        else zoneParametersDto.setValidatorUndelegationMap(new HashMap<>());
 
         return zoneParametersDto;
     }
@@ -64,18 +93,18 @@ public class RestClient {
         return (List<String>) callApi(addresses, endpointsProperties.getValidatorList(), "validators/operator_address", true, 2).orElse(null);
     }
 
-    private Map<String, List<String>> findDelegationsAddressesOfActiveValidators(List<String> addresses, List<String> validatorAddresses) {
-        Map<String, List<String>> delegationsAddressesOfActiveValidatorsMap = new HashMap<>();
+    private Set<String> findDelegatorAddressesOfActiveValidators(List<String> addresses, List<String> validatorAddresses) {
+        Set<String> delegatorAddresses = ConcurrentHashMap.newKeySet();
 
         ForkJoinPool forkJoinPool = new ForkJoinPool(50);
 
-        AtomicInteger iter = new AtomicInteger();
         Runnable doWork = () -> validatorAddresses.stream().parallel().forEach(vAddr -> {
-            List<String> amount1 = (List<String>) callApi(addresses,
+            List<String> delegatorAddressesOfValidator = (List<String>) callApi(addresses,
                     String.format(endpointsProperties.getDelegations(), vAddr),
-                    "delegation_responses/balance/amount", true, 3).orElse(null);
-            delegationsAddressesOfActiveValidatorsMap.put(vAddr, amount1);
-            iter.getAndIncrement();
+                    "delegation_responses/delegation/delegator_address", true, 3).orElse(null);
+            if (delegatorAddressesOfValidator != null) {
+                delegatorAddresses.addAll(delegatorAddressesOfValidator);
+            }
         });
 
         try {
@@ -85,7 +114,42 @@ public class RestClient {
         } finally {
             forkJoinPool.shutdown();
         }
-        return delegationsAddressesOfActiveValidatorsMap;
+        return delegatorAddresses;
+    }
+
+    private Map<String, List<String>> findUndelegationsAddressesOfActiveValidators(List<String> addresses, List<String> validatorAddresses) {
+        Map<String, List<String>> undelegationsAddressesOfActiveValidatorsMap = new HashMap<>();
+
+        ForkJoinPool forkJoinPool = new ForkJoinPool(50);
+
+        Runnable doWork = () -> validatorAddresses.stream().parallel().forEach(vAddr -> {
+            List<String> amount1 = (List<String>) callApi(addresses,
+                    String.format(endpointsProperties.getUndelegations(), vAddr),
+                    "unbonding_responses/entries/initial_balance", true, 3).orElse(null);
+            if (amount1 != null) {
+                undelegationsAddressesOfActiveValidatorsMap.put(vAddr, amount1);
+            }
+        });
+
+        try {
+            forkJoinPool.submit(doWork).get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            forkJoinPool.shutdown();
+        }
+        return undelegationsAddressesOfActiveValidatorsMap;
+    }
+
+    private Map<String, String> findDelegatorSharesOfActiveValidators(List<String> addresses, List<String> validatorAddresses) {
+        Map<String, String> delegatorSharesOfActiveValidatorsMap = new HashMap<>();
+
+        for (String currentValidator : validatorAddresses) {
+            String shares = (String) callApi(addresses, String.format(endpointsProperties.getValidatorParam(), currentValidator), "/validator/delegator_shares", false, 2).orElse(null);
+            delegatorSharesOfActiveValidatorsMap.put(currentValidator, shares);
+        }
+
+        return delegatorSharesOfActiveValidatorsMap;
     }
 
     private String findBondedTokens(List<String> addresses) {

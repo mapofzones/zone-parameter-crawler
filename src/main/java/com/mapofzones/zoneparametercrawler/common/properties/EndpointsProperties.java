@@ -17,5 +17,7 @@ public class EndpointsProperties {
     private String unboundPeriod;
     private String supply;
     private String delegations;
+    private String undelegations;
+    private String validatorParam;
 
 }

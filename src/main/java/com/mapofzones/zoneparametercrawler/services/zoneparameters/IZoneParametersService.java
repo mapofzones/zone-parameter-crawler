@@ -13,4 +13,7 @@ public interface IZoneParametersService {
     List<ZoneParameters> findEmptyZoneParameters();
     void findBaseZoneParametersFromAddresses(ZoneParameters zoneParameters, List<String> addresses);
     void findDelegationsAmountFromAddresses(ZoneParameters zoneParameters, List<String> addresses);
+    void findUndelegationsAmountFromAddresses(ZoneParameters zoneParameters, List<String> addresses);
+    void findDelegatorAddressesCountFromAddresses(ZoneParameters zoneParameters, List<String> addresses);
+
 }

@@ -1,11 +1,13 @@
 endpoint:
   inflation: '/cosmos/mint/v1beta1/inflation'
   validators-quantity: '/validatorsets/latest'
-  validator-list: '/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=1000'
+  validator-list: '/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=200'
   amount-of-bonded: '/cosmos/staking/v1beta1/pool'
   unbound-period: '/cosmos/staking/v1beta1/params'
   supply: '/cosmos/bank/v1beta1/supply/%s'
   delegations: '/cosmos/staking/v1beta1/validators/%s/delegations?pagination.limit=1000000'
+  undelegations: '/cosmos/staking/v1beta1/validators/%s/unbonding_delegations?pagination.limit=1000000'
+  validator-param: '/cosmos/staking/v1beta1/validators/%s'
 
 spring:
   main:

@@ -94,6 +94,54 @@ public class ZoneParametersFacade implements IZoneParametersFacade {
 
     }
 
+    @Override
+    public void findUndelegationsAmount() {
+        List<ZoneParameters> zoneParameters = zoneParametersService.findEmptyZoneParameters();
+        log.info("Start FindUndelegationsAmount...");
+
+        Map<ZoneParameters, List<String>> zoneParametersAddressesMap = zoneParameters.stream()
+                .collect(Collectors.toConcurrentMap(Function.identity(), key ->
+                        zoneRepository.findRestAddressesWithHightestBlockByChainId(key.getZoneParametersId().getZone())));
+
+        Runnable getBaseZoneParametersTask = () -> zoneParametersAddressesMap.entrySet().stream().parallel().forEach(entry -> {
+            if (!entry.getValue().isEmpty()) {
+                log.info("FindUndelegationsAmount: Started: " + entry.getKey().getZoneParametersId().getZone());
+                if (entry.getKey() != null && entry.getValue() != null)
+                    zoneParametersService.findUndelegationsAmountFromAddresses(entry.getKey(), entry.getValue());
+                log.info("FindUndelegationsAmount: FINISHED: " + entry.getKey().getZoneParametersId().getZone());
+            }
+        });
+
+        findZoneParameters(getBaseZoneParametersTask);
+        zoneParametersService.saveDelegationAmount(zoneParameters);
+        log.info("Finish FindUndelegationsAmount...");
+
+    }
+
+    @Override
+    public void findDelegatorAddressesCount() {
+        List<ZoneParameters> zoneParameters = zoneParametersService.findEmptyZoneParameters();
+        log.info("Start FindDelegatorAddressesCount...");
+
+        Map<ZoneParameters, List<String>> zoneParametersAddressesMap = zoneParameters.stream()
+                .collect(Collectors.toConcurrentMap(Function.identity(), key ->
+                        zoneRepository.findRestAddressesWithHightestBlockByChainId(key.getZoneParametersId().getZone())));
+
+        Runnable getBaseZoneParametersTask = () -> zoneParametersAddressesMap.entrySet().stream().parallel().forEach(entry -> {
+            if (!entry.getValue().isEmpty()) {
+                log.info("FindDelegatorAddressesCount: Started: " + entry.getKey().getZoneParametersId().getZone());
+                if (entry.getKey() != null && entry.getValue() != null)
+                    zoneParametersService.findDelegatorAddressesCountFromAddresses(entry.getKey(), entry.getValue());
+                log.info("FindDelegatorAddressesCount: FINISHED: " + entry.getKey().getZoneParametersId().getZone());
+            }
+        });
+
+        findZoneParameters(getBaseZoneParametersTask);
+        zoneParametersService.saveDelegationAmount(zoneParameters);
+        log.info("Finish FindDelegatorAddressesCount...");
+
+    }
+
     protected void findZoneParameters(Runnable function) {
         ForkJoinPool forkJoinPool = new ForkJoinPool(15);
 
