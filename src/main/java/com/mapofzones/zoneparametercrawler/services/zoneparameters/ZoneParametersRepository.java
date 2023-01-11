@@ -24,6 +24,14 @@ public interface ZoneParametersRepository extends JpaRepository<ZoneParameters, 
     @Query(value = "UPDATE zone_parameters SET delegation_amount = ?3 WHERE zone = ?1 AND datetime = ?2", nativeQuery = true)
     void saveDelegationAmount(String zone, LocalDateTime dateTime, BigDecimal delegationAmount);
 
+    @Modifying
+    @Query(value = "UPDATE zone_parameters SET undelegation_amount = ?3 WHERE zone = ?1 AND datetime = ?2", nativeQuery = true)
+    void saveUndelegationAmount(String zone, LocalDateTime dateTime, BigDecimal delegationAmount);
+
+    @Modifying
+    @Query(value = "UPDATE zone_parameters SET delegators_count = ?3 WHERE zone = ?1 AND datetime = ?2", nativeQuery = true)
+    void saveDelegatorAddressesCountAmount(String zone, LocalDateTime dateTime, Integer delegationAmount);
+
     @Query(value = "select * from zone_parameters zp where zp.datetime = " +
             "(select zp1.datetime from zone_parameters zp1 ORDER BY zp1.datetime DESC LIMIT 1)", nativeQuery = true)
     List<ZoneParameters> findEmptyZoneParameters();

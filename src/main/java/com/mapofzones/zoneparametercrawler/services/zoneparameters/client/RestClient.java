@@ -10,12 +10,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
@@ -48,7 +45,7 @@ public class RestClient {
 
         if (findValidatorsAddresses != null)
             zoneParametersDto.setDelegatorAddresses(findDelegatorAddressesOfActiveValidators(addresses, findValidatorsAddresses));
-        else zoneParametersDto.setDelegatorAddresses(new HashSet<>());
+        else zoneParametersDto.setDelegatorAddresses(new HashMap<>());
 
         return zoneParametersDto;
     }
@@ -93,8 +90,8 @@ public class RestClient {
         return (List<String>) callApi(addresses, endpointsProperties.getValidatorList(), "validators/operator_address", true, 2).orElse(null);
     }
 
-    private Set<String> findDelegatorAddressesOfActiveValidators(List<String> addresses, List<String> validatorAddresses) {
-        Set<String> delegatorAddresses = ConcurrentHashMap.newKeySet();
+    private Map<String, List<String>> findDelegatorAddressesOfActiveValidators(List<String> addresses, List<String> validatorAddresses) {
+        Map<String, List<String>> delegationsAddressesOfActiveValidatorsMap = new HashMap<>();
 
         ForkJoinPool forkJoinPool = new ForkJoinPool(50);
 
@@ -103,7 +100,7 @@ public class RestClient {
                     String.format(endpointsProperties.getDelegations(), vAddr),
                     "delegation_responses/delegation/delegator_address", true, 3).orElse(null);
             if (delegatorAddressesOfValidator != null) {
-                delegatorAddresses.addAll(delegatorAddressesOfValidator);
+                delegationsAddressesOfActiveValidatorsMap.put(vAddr, delegatorAddressesOfValidator);
             }
         });
 
@@ -114,7 +111,7 @@ public class RestClient {
         } finally {
             forkJoinPool.shutdown();
         }
-        return delegatorAddresses;
+        return delegationsAddressesOfActiveValidatorsMap;
     }
 
     private Map<String, List<String>> findUndelegationsAddressesOfActiveValidators(List<String> addresses, List<String> validatorAddresses) {

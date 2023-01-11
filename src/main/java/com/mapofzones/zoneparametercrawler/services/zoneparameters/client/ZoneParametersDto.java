@@ -13,7 +13,7 @@ public class ZoneParametersDto {
     private String bondedTokens;
     private Double Inflation;
     private String unboundPeriod;
-    private Set<String> delegatorAddresses;
+    private Map<String, List<String>> delegatorAddresses;
     private Map<String, List<String>> validatorUndelegationMap;
     private Map<String, String> delegatorShares;
     private Set<String> delegators;

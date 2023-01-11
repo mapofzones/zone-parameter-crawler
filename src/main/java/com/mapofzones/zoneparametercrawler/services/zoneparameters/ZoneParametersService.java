@@ -44,6 +44,22 @@ public class ZoneParametersService implements IZoneParametersService {
     }
 
     @Override
+    @Transactional
+    public void saveUndelegationAmount(List<ZoneParameters> zoneParametersList) {
+        for (ZoneParameters zoneParameters : zoneParametersList) {
+            zoneParametersRepository.saveUndelegationAmount(zoneParameters.getZoneParametersId().getZone(), zoneParameters.getZoneParametersId().getDatetime(), zoneParameters.getUndelegationAmount());
+        }
+    }
+
+    @Override
+    @Transactional
+    public void saveDelegatorAddressesCount(List<ZoneParameters> zoneParametersList) {
+        for (ZoneParameters zoneParameters : zoneParametersList) {
+            zoneParametersRepository.saveDelegatorAddressesCountAmount(zoneParameters.getZoneParametersId().getZone(), zoneParameters.getZoneParametersId().getDatetime(), zoneParameters.getDelegatorAddressesCount());
+        }
+    }
+
+    @Override
     public List<ZoneParameters> findEmptyZoneParameters() {
         return zoneParametersRepository.findEmptyZoneParameters();
     }

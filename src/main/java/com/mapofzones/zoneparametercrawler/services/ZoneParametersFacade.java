@@ -29,7 +29,9 @@ public class ZoneParametersFacade implements IZoneParametersFacade {
         this.zoneRepository = zoneRepository;
     }
 
+
     @Async
+    @Override
     @Transactional
     public void createEmptyZoneParameters() {
         log.info("Start CreateEmptyZoneParameters...");
@@ -48,6 +50,7 @@ public class ZoneParametersFacade implements IZoneParametersFacade {
     }
 
     @Async
+    @Override
     public void findBaseZoneParameters() {
         List<ZoneParameters> zoneParameters = zoneParametersService.findEmptyZoneParameters();
         log.info("Start FindBaseZoneParameters...");
@@ -70,6 +73,7 @@ public class ZoneParametersFacade implements IZoneParametersFacade {
     }
 
     @Async
+    @Override
     public void findDelegationsAmount() {
         List<ZoneParameters> zoneParameters = zoneParametersService.findEmptyZoneParameters();
         log.info("Start FindDelegationsAmount...");
@@ -95,6 +99,7 @@ public class ZoneParametersFacade implements IZoneParametersFacade {
     }
 
     @Override
+    @Async
     public void findUndelegationsAmount() {
         List<ZoneParameters> zoneParameters = zoneParametersService.findEmptyZoneParameters();
         log.info("Start FindUndelegationsAmount...");
@@ -113,12 +118,13 @@ public class ZoneParametersFacade implements IZoneParametersFacade {
         });
 
         findZoneParameters(getBaseZoneParametersTask);
-        zoneParametersService.saveDelegationAmount(zoneParameters);
+        zoneParametersService.saveUndelegationAmount(zoneParameters);
         log.info("Finish FindUndelegationsAmount...");
 
     }
 
     @Override
+    @Async
     public void findDelegatorAddressesCount() {
         List<ZoneParameters> zoneParameters = zoneParametersService.findEmptyZoneParameters();
         log.info("Start FindDelegatorAddressesCount...");
@@ -137,7 +143,7 @@ public class ZoneParametersFacade implements IZoneParametersFacade {
         });
 
         findZoneParameters(getBaseZoneParametersTask);
-        zoneParametersService.saveDelegationAmount(zoneParameters);
+        zoneParametersService.saveDelegatorAddressesCount(zoneParameters);
         log.info("Finish FindDelegatorAddressesCount...");
 
     }

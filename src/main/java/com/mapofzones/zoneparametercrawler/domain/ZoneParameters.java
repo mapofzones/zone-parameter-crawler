@@ -16,8 +16,10 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Getter
 @Entity
@@ -75,33 +77,38 @@ public class ZoneParameters {
         this.unboundPeriod = zoneParametersDto.getUnboundPeriod() != null ? Integer.parseInt(zoneParametersDto.getUnboundPeriod().replaceAll("\\D", "")) : null;
     }
 
-    public void setDelegatorAddressesCount(ZoneParametersDto zoneParametersDto) {
-        this.delegatorAddressesCount = zoneParametersDto.getDelegatorAddresses().size();
-    }
-
     public void setValidatorsShares(ZoneParametersDto zoneParametersDto) {
         if (zoneParametersDto.getDelegatorShares() != null && !zoneParametersDto.getDelegatorShares().isEmpty()) {
             BigDecimal amountShares = BigDecimal.ZERO;
             for (Map.Entry<String, String> curretEntry : zoneParametersDto.getDelegatorShares().entrySet()) {
-                amountShares = amountShares.add(BigDecimal.valueOf(Double.parseDouble(curretEntry.getValue())));
+                if (curretEntry != null) {
+                    amountShares = amountShares.add(BigDecimal.valueOf(Double.parseDouble(curretEntry.getValue())));
+                }
             }
             this.delegationAmount = amountShares;
         }
     }
 
-//    private BigDecimal delegationAmountCalculation(Map<String, List<String>> validatorUndelegationMap) {
-//        double totalAmount = 0D;
-//        for (Map.Entry<String, List<String>> entry : validatorUndelegationMap.entrySet())
-//            if (entry.getValue() != null)
-//                for (String amount : entry.getValue())
-//                    totalAmount += Double.parseDouble(amount);
-//        return BigDecimal.valueOf(totalAmount);
-//    }
-//
-//    private boolean validateValidatorDelegationMap(Map<String, List<String>> validatorDelegationMap, Integer activeValidators) {
-//        return (validatorDelegationMap != null && !validatorDelegationMap.isEmpty()) &&
-//                (activeValidators != null && validatorDelegationMap.size() == activeValidators);
-//    }
+    public void setDelegatorAddressesCount(ZoneParametersDto zoneParametersDto) {
+        if (validateDelegatorAddressesCount(zoneParametersDto.getDelegatorAddresses(), zoneParametersDto.getActiveValidators())) {
+            this.delegatorAddressesCount = delegatorAddressesCountCalculation(zoneParametersDto.getDelegatorAddresses());
+        }
+    }
+
+    private Integer delegatorAddressesCountCalculation(Map<String, List<String>> validatorDelegatorAddressesMap) {
+
+        Set<String> delegatorsAddress = new HashSet<>();
+
+        for (Map.Entry<String, List<String>> entry : validatorDelegatorAddressesMap.entrySet())
+            if (entry.getValue() != null)
+                delegatorsAddress.addAll(entry.getValue());
+        return delegatorsAddress.size();
+    }
+
+    private boolean validateDelegatorAddressesCount(Map<String, List<String>> validatorDelegatorAddressesMap, Integer activeValidators) {
+        return (validatorDelegatorAddressesMap != null && !validatorDelegatorAddressesMap.isEmpty()) &&
+                (activeValidators != null && validatorDelegatorAddressesMap.size() == activeValidators);
+    }
 
     public void setUndelegationsAmount(ZoneParametersDto zoneParametersDto) {
         if (validateValidatorUndelegationMap(zoneParametersDto.getValidatorUndelegationMap(), zoneParametersDto.getActiveValidators())) {
