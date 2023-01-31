@@ -66,25 +66,25 @@ public class ZoneParametersService implements IZoneParametersService {
 
     @Override
     public void findBaseZoneParametersFromAddresses(ZoneParameters zoneParameters, List<String> addresses) {
-        ZoneParametersDto foundZoneParameters = restClient.findParameters(addresses);
+        ZoneParametersDto foundZoneParameters = restClient.findParameters(zoneParameters.getZoneParametersId().getZone(), addresses);
         zoneParameters.setBaseZoneParameters(foundZoneParameters);
     }
 
     @Override
     public void findDelegationsAmountFromAddresses(ZoneParameters zoneParameters, List<String> addresses) {
-        ZoneParametersDto foundZoneParameters = restClient.findDelegatorShares(addresses);
+        ZoneParametersDto foundZoneParameters = restClient.findDelegatorShares(zoneParameters.getZoneParametersId().getZone(), addresses);
         zoneParameters.setValidatorsShares(foundZoneParameters);
     }
 
     @Override
     public void findUndelegationsAmountFromAddresses(ZoneParameters zoneParameters, List<String> addresses) {
-        ZoneParametersDto foundZoneParameters = restClient.findUndelegations(addresses);
+        ZoneParametersDto foundZoneParameters = restClient.findUndelegations(zoneParameters.getZoneParametersId().getZone(), addresses);
         zoneParameters.setUndelegationsAmount(foundZoneParameters);
     }
 
     @Override
     public void findDelegatorAddressesCountFromAddresses(ZoneParameters zoneParameters, List<String> addresses) {
-        ZoneParametersDto foundZoneParameters = restClient.findDelegatorAddresses(addresses);
+        ZoneParametersDto foundZoneParameters = restClient.findDelegatorAddresses(zoneParameters.getZoneParametersId().getZone(), addresses);
         zoneParameters.setDelegatorAddressesCount(foundZoneParameters);
     }
 

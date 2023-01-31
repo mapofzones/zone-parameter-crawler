@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,7 +33,7 @@ class ZoneParametersServiceTest {
         dto.setBondedTokens("123456789");
         dto.setUnboundPeriod("27000s");
 
-        when(restClient.findParameters(any())).thenReturn(dto);
+        when(restClient.findParameters(anyString(),any())).thenReturn(dto);
 
         ZoneParametersService zoneParametersService = new ZoneParametersService(zoneParametersRepository, restClient);
         zoneParametersService.findBaseZoneParametersFromAddresses(new ZoneParameters(new ZoneParameters.ZoneParametersId("network-1", LocalDateTime.now())), List.of(""));

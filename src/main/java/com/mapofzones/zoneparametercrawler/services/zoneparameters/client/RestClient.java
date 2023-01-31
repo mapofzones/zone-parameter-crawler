@@ -28,18 +28,18 @@ public class RestClient {
         this.endpointsProperties = endpointsProperties;
     }
 
-    public ZoneParametersDto findParameters(List<String> addresses) {
+    public ZoneParametersDto findParameters(String zone, List<String> addresses) {
         ZoneParametersDto zoneParametersDto = new ZoneParametersDto();
-        zoneParametersDto.setActiveValidators(findActiveValidatorsQuantity(addresses));
+        zoneParametersDto.setActiveValidators(findActiveValidatorsQuantity(zone, addresses));
         zoneParametersDto.setBondedTokens(findBondedTokens(addresses));
-        zoneParametersDto.setInflation(findInflation(addresses));
+        zoneParametersDto.setInflation(findInflation(zone, addresses));
         zoneParametersDto.setUnboundPeriod(findUnboundPeriod(addresses));
         return zoneParametersDto;
     }
 
-    public ZoneParametersDto findDelegatorAddresses(List<String> addresses) {
+    public ZoneParametersDto findDelegatorAddresses(String zone, List<String> addresses) {
         ZoneParametersDto zoneParametersDto = new ZoneParametersDto();
-        zoneParametersDto.setActiveValidators(findActiveValidatorsQuantity(addresses));
+        zoneParametersDto.setActiveValidators(findActiveValidatorsQuantity(zone, addresses));
 
         List<String> findValidatorsAddresses = findValidatorsAddresses(addresses);
 
@@ -50,10 +50,10 @@ public class RestClient {
         return zoneParametersDto;
     }
 
-    public ZoneParametersDto findDelegatorShares(List<String> addresses) {
+    public ZoneParametersDto findDelegatorShares(String zone, List<String> addresses) {
 
         ZoneParametersDto zoneParametersDto = new ZoneParametersDto();
-        zoneParametersDto.setActiveValidators(findActiveValidatorsQuantity(addresses));
+        zoneParametersDto.setActiveValidators(findActiveValidatorsQuantity(zone, addresses));
 
         List<String> findValidatorsAddresses = findValidatorsAddresses(addresses);
 
@@ -64,9 +64,9 @@ public class RestClient {
         return zoneParametersDto;
     }
 
-    public ZoneParametersDto findUndelegations(List<String> addresses) {
+    public ZoneParametersDto findUndelegations(String zone, List<String> addresses) {
         ZoneParametersDto zoneParametersDto = new ZoneParametersDto();
-        zoneParametersDto.setActiveValidators(findActiveValidatorsQuantity(addresses));
+        zoneParametersDto.setActiveValidators(findActiveValidatorsQuantity(zone, addresses));
 
         List<String> findValidatorsAddresses = findValidatorsAddresses(addresses);
 
@@ -77,11 +77,17 @@ public class RestClient {
         return zoneParametersDto;
     }
 
-    private Integer findActiveValidatorsQuantity(List<String> addresses) {
-        String value = (String) callApi(addresses, endpointsProperties.getValidatorsQuantity(), "/result/total", false, 2).orElse(null);
+    private Integer findActiveValidatorsQuantity(String zone, List<String> addresses) {
 
-        if (value == null)
-            value =  (String) callApi(addresses, endpointsProperties.getValidatorList(), "/pagination/total", false, 2).orElse(null);
+        String value;
+
+        if (zone.equals("stride-1")) {
+            value = (String) callApi(List.of("https://stride.nodejumper.io"), "/validators", "/result/total", false, 1).orElse(null);
+        } else {
+            value = (String) callApi(addresses, endpointsProperties.getValidatorsQuantity(), "/result/total", false, 2).orElse(null);
+            if (value == null)
+                value = (String) callApi(addresses, endpointsProperties.getValidatorList(), "/pagination/total", false, 2).orElse(null);
+        }
 
         return value != null ? Integer.parseInt(value) : null;
     }
@@ -153,8 +159,12 @@ public class RestClient {
         return (String) callApi(addresses, endpointsProperties.getAmountOfBonded(), "/pool/bonded_tokens", false, 2).orElse(null);
     }
 
-    private Double findInflation(List<String> addresses) {
-        String value = (String) callApi(addresses, endpointsProperties.getInflation(), "/inflation", false, 2).orElse(null);
+    private Double findInflation(String zone, List<String> addresses) {
+        String value;
+//        if (zone.equals("axelar-dojo-1")) {
+//            value = (String) callApi(List.of("https://api.axelarscan.io"), "/inflation", "/inflation", false, 1).orElse(null);
+//        } else
+            value = (String) callApi(addresses, endpointsProperties.getInflation(), "/inflation", false, 2).orElse(null);
         return value != null ? Double.parseDouble(value) : null;
     }
 
