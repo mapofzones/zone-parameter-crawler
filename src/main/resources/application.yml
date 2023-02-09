@@ -1,7 +1,10 @@
 endpoint:
   inflation: '/cosmos/mint/v1beta1/inflation'
-  validators-quantity: '/validatorsets/latest'
-  validator-list: '/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=200'
+  active-validators-quantity: '/validatorsets/latest'
+  active-validators-quantity-extra: '/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=1&pagination.count_total=true'
+  all-validators-quantity: '/cosmos/staking/v1beta1/validators?pagination.limit=1&pagination.count_total=true'
+  active-validator-list: '/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=200'
+  all-validator-list: '/cosmos/staking/v1beta1/validators?pagination.limit=1000'
   amount-of-bonded: '/cosmos/staking/v1beta1/pool'
   unbound-period: '/cosmos/staking/v1beta1/params'
   supply: '/cosmos/bank/v1beta1/supply/%s'

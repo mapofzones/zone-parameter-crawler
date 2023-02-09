@@ -71,7 +71,7 @@ public class ZoneParameters {
     }
 
     public void setBaseZoneParameters(ZoneParametersDto zoneParametersDto) {
-        this.activeValidatorsQuantity = zoneParametersDto.getActiveValidators();
+        this.activeValidatorsQuantity = zoneParametersDto.getValidatorsQuantity();
         this.amountOfBonded = zoneParametersDto.getBondedTokens() != null ? new BigInteger(zoneParametersDto.getBondedTokens()) : null;
         this.inflation = zoneParametersDto.getInflation() != null ? BigDecimal.valueOf(zoneParametersDto.getInflation()) : null;
         this.unboundPeriod = zoneParametersDto.getUnboundPeriod() != null ? Integer.parseInt(zoneParametersDto.getUnboundPeriod().replaceAll("\\D", "")) : null;
@@ -90,7 +90,7 @@ public class ZoneParameters {
     }
 
     public void setDelegatorAddressesCount(ZoneParametersDto zoneParametersDto) {
-        if (validateDelegatorAddressesCount(zoneParametersDto.getDelegatorAddresses(), zoneParametersDto.getActiveValidators())) {
+        if (validateDelegatorAddressesCount(zoneParametersDto.getDelegatorAddresses(), zoneParametersDto.getValidatorsQuantity())) {
             this.delegatorAddressesCount = delegatorAddressesCountCalculation(zoneParametersDto.getDelegatorAddresses());
         }
     }
@@ -111,7 +111,7 @@ public class ZoneParameters {
     }
 
     public void setUndelegationsAmount(ZoneParametersDto zoneParametersDto) {
-        if (validateValidatorUndelegationMap(zoneParametersDto.getValidatorUndelegationMap(), zoneParametersDto.getActiveValidators())) {
+        if (validateValidatorUndelegationMap(zoneParametersDto.getValidatorUndelegationMap(), zoneParametersDto.getValidatorsQuantity())) {
             this.undelegationAmount = undelegationAmountCalculation(zoneParametersDto.getValidatorUndelegationMap());
         }
     }

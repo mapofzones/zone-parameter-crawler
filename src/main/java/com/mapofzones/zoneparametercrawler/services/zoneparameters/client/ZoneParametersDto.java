@@ -9,7 +9,7 @@ import java.util.Set;
 @Data
 public class ZoneParametersDto {
 
-    private Integer activeValidators;
+    private Integer validatorsQuantity;
     private String bondedTokens;
     private Double Inflation;
     private String unboundPeriod;

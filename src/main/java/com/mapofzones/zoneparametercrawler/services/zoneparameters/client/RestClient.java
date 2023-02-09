@@ -30,7 +30,7 @@ public class RestClient {
 
     public ZoneParametersDto findParameters(String zone, List<String> addresses) {
         ZoneParametersDto zoneParametersDto = new ZoneParametersDto();
-        zoneParametersDto.setActiveValidators(findActiveValidatorsQuantity(zone, addresses));
+        zoneParametersDto.setValidatorsQuantity(findActiveValidatorsQuantity(zone, addresses));
         zoneParametersDto.setBondedTokens(findBondedTokens(addresses));
         zoneParametersDto.setInflation(findInflation(zone, addresses));
         zoneParametersDto.setUnboundPeriod(findUnboundPeriod(addresses));
@@ -39,12 +39,12 @@ public class RestClient {
 
     public ZoneParametersDto findDelegatorAddresses(String zone, List<String> addresses) {
         ZoneParametersDto zoneParametersDto = new ZoneParametersDto();
-        zoneParametersDto.setActiveValidators(findActiveValidatorsQuantity(zone, addresses));
+        zoneParametersDto.setValidatorsQuantity(findAllValidatorsQuantity(zone, addresses));
 
-        List<String> findValidatorsAddresses = findValidatorsAddresses(addresses);
+        List<String> findValidatorsAddresses = findAllValidatorsAddresses(addresses);
 
         if (findValidatorsAddresses != null)
-            zoneParametersDto.setDelegatorAddresses(findDelegatorAddressesOfActiveValidators(addresses, findValidatorsAddresses));
+            zoneParametersDto.setDelegatorAddresses(findDelegatorAddressesOfAllValidators(addresses, findValidatorsAddresses));
         else zoneParametersDto.setDelegatorAddresses(new HashMap<>());
 
         return zoneParametersDto;
@@ -53,9 +53,9 @@ public class RestClient {
     public ZoneParametersDto findDelegatorShares(String zone, List<String> addresses) {
 
         ZoneParametersDto zoneParametersDto = new ZoneParametersDto();
-        zoneParametersDto.setActiveValidators(findActiveValidatorsQuantity(zone, addresses));
+        zoneParametersDto.setValidatorsQuantity(findAllValidatorsQuantity(zone, addresses));
 
-        List<String> findValidatorsAddresses = findValidatorsAddresses(addresses);
+        List<String> findValidatorsAddresses = findAllValidatorsAddresses(addresses);
 
         if (findValidatorsAddresses != null) {
             zoneParametersDto.setDelegatorShares(findDelegatorSharesOfActiveValidators(addresses, findValidatorsAddresses));
@@ -66,9 +66,9 @@ public class RestClient {
 
     public ZoneParametersDto findUndelegations(String zone, List<String> addresses) {
         ZoneParametersDto zoneParametersDto = new ZoneParametersDto();
-        zoneParametersDto.setActiveValidators(findActiveValidatorsQuantity(zone, addresses));
+        zoneParametersDto.setValidatorsQuantity(findAllValidatorsQuantity(zone, addresses));
 
-        List<String> findValidatorsAddresses = findValidatorsAddresses(addresses);
+        List<String> findValidatorsAddresses = findAllValidatorsAddresses(addresses);
 
         if (findValidatorsAddresses != null)
             zoneParametersDto.setValidatorUndelegationMap(findUndelegationsAddressesOfActiveValidators(addresses, findValidatorsAddresses));
@@ -84,20 +84,36 @@ public class RestClient {
         if (zone.equals("stride-1")) {
             value = (String) callApi(List.of("https://stride.nodejumper.io"), "/validators", "/result/total", false, 1).orElse(null);
         } else {
-            value = (String) callApi(addresses, endpointsProperties.getValidatorsQuantity(), "/result/total", false, 2).orElse(null);
+            value = (String) callApi(addresses, endpointsProperties.getActiveValidatorsQuantity(), "/result/total", false, 2).orElse(null);
             if (value == null)
-                value = (String) callApi(addresses, endpointsProperties.getValidatorList(), "/pagination/total", false, 2).orElse(null);
+                value = (String) callApi(addresses, endpointsProperties.getActiveValidatorsQuantityExtra(), "/pagination/total", false, 2).orElse(null);
         }
 
         return value != null ? Integer.parseInt(value) : null;
     }
 
-    private List<String> findValidatorsAddresses(List<String> addresses) {
-        return (List<String>) callApi(addresses, endpointsProperties.getValidatorList(), "validators/operator_address", true, 2).orElse(null);
+    private Integer findAllValidatorsQuantity(String zone, List<String> addresses) {
+
+        String value;
+
+        if (zone.equals("stride-1")) {
+            value = (String) callApi(List.of("https://stride.nodejumper.io"), "/validators", "/result/total", false, 1).orElse(null);
+        } else {
+            value = (String) callApi(addresses, endpointsProperties.getAllValidatorsQuantity(), "/pagination/total", false, 2).orElse(null);
+        }
+        return value != null ? Integer.parseInt(value) : null;
     }
 
-    private Map<String, List<String>> findDelegatorAddressesOfActiveValidators(List<String> addresses, List<String> validatorAddresses) {
-        Map<String, List<String>> delegationsAddressesOfActiveValidatorsMap = new HashMap<>();
+    private List<String> findActiveValidatorsAddresses(List<String> addresses) {
+        return (List<String>) callApi(addresses, endpointsProperties.getActiveValidatorList(), "validators/operator_address", true, 2).orElse(null);
+    }
+
+    private List<String> findAllValidatorsAddresses(List<String> addresses) {
+        return (List<String>) callApi(addresses, endpointsProperties.getAllValidatorList(), "validators/operator_address", true, 2).orElse(null);
+    }
+
+    private Map<String, List<String>> findDelegatorAddressesOfAllValidators(List<String> addresses, List<String> validatorAddresses) {
+        Map<String, List<String>> delegationsAddressesOfAllValidatorsMap = new HashMap<>();
 
         ForkJoinPool forkJoinPool = new ForkJoinPool(50);
 
@@ -106,7 +122,7 @@ public class RestClient {
                     String.format(endpointsProperties.getDelegations(), vAddr),
                     "delegation_responses/delegation/delegator_address", true, 3).orElse(null);
             if (delegatorAddressesOfValidator != null) {
-                delegationsAddressesOfActiveValidatorsMap.put(vAddr, delegatorAddressesOfValidator);
+                delegationsAddressesOfAllValidatorsMap.put(vAddr, delegatorAddressesOfValidator);
             }
         });
 
@@ -117,7 +133,7 @@ public class RestClient {
         } finally {
             forkJoinPool.shutdown();
         }
-        return delegationsAddressesOfActiveValidatorsMap;
+        return delegationsAddressesOfAllValidatorsMap;
     }
 
     private Map<String, List<String>> findUndelegationsAddressesOfActiveValidators(List<String> addresses, List<String> validatorAddresses) {

@@ -10,8 +10,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class EndpointsProperties {
 
     private String inflation;
-    private String validatorsQuantity;
-    private String validatorList;
+    private String activeValidatorsQuantity;
+    private String activeValidatorsQuantityExtra;
+    private String allValidatorsQuantity;
+    private String activeValidatorList;
+    private String allValidatorList;
     private String amountOfBonded;
     private String stakingApr;
     private String unboundPeriod;

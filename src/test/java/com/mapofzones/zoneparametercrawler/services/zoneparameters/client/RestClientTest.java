@@ -104,7 +104,7 @@ class RestClientTest extends AbstractTest {
 //
 //    @Test
 //    void findDelegatorAddresses() {
-//        ZoneParametersDto dto = restClient.findDelegatorAddresses(List.of("https://injective-lcd.quickapi.com:443"));
+//        ZoneParametersDto dto = restClient.findDelegatorAddresses("jackal-1", List.of("https://api.jackalprotocol.com", "http://159.69.168.245:1317", "http://154.12.227.132:1317"));
 //        ZoneParameters zp = new ZoneParameters(new ZoneParameters.ZoneParametersId());
 //        zp.setDelegatorAddressesCount(dto);
 //

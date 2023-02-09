@@ -29,7 +29,7 @@ class ZoneParametersServiceTest {
 
         ZoneParametersDto dto = new ZoneParametersDto();
         dto.setInflation(0.01d);
-        dto.setActiveValidators(150);
+        dto.setValidatorsQuantity(150);
         dto.setBondedTokens("123456789");
         dto.setUnboundPeriod("27000s");
 
