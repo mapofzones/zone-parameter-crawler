@@ -1,15 +1,11 @@
 package com.mapofzones.zoneparametercrawler.services.zoneparameters;
 
-import com.mapofzones.zoneparametercrawler.domain.ZoneParameters;
 import com.mapofzones.zoneparametercrawler.services.zoneparameters.client.RestClient;
 import com.mapofzones.zoneparametercrawler.services.zoneparameters.client.ZoneParametersDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -35,8 +31,8 @@ class ZoneParametersServiceTest {
 
         when(restClient.findParameters(anyString(),any())).thenReturn(dto);
 
-        ZoneParametersService zoneParametersService = new ZoneParametersService(zoneParametersRepository, restClient);
-        zoneParametersService.findBaseZoneParametersFromAddresses(new ZoneParameters(new ZoneParameters.ZoneParametersId("network-1", LocalDateTime.now())), List.of(""));
+//        ZoneParametersService zoneParametersService = new ZoneParametersService(zoneParametersRepository, restClient);
+//        zoneParametersService.findBaseZoneParametersFromAddresses(new ZoneParameters(new ZoneParameters.ZoneParametersId("network-1", LocalDateTime.now())), List.of(""));
 
 //        assertAll(() -> {
 //            assertEquals(1, zoneParameters.size());

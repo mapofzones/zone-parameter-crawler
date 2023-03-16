@@ -12,11 +12,14 @@ import java.util.List;
 public class ZoneParametersService implements IZoneParametersService {
 
     private final ZoneParametersRepository zoneParametersRepository;
+    private final OsmosisParametersService osmosisParametersService;
     private final RestClient restClient;
 
     public ZoneParametersService(ZoneParametersRepository zoneParametersRepository,
+                                 OsmosisParametersService osmosisParametersService,
                                  RestClient restClient) {
         this.zoneParametersRepository = zoneParametersRepository;
+        this.osmosisParametersService = osmosisParametersService;
         this.restClient = restClient;
     }
 
@@ -66,7 +69,14 @@ public class ZoneParametersService implements IZoneParametersService {
 
     @Override
     public void findBaseZoneParametersFromAddresses(ZoneParameters zoneParameters, List<String> addresses) {
+
         ZoneParametersDto foundZoneParameters = restClient.findParameters(zoneParameters.getZoneParametersId().getZone(), addresses);
+
+        if (zoneParameters.getZoneParametersId().getZone().equals("osmosis-1")) {
+            osmosisParametersService.calculateInflation(foundZoneParameters);
+            osmosisParametersService.calculateApr(foundZoneParameters);
+        }
+
         zoneParameters.setBaseZoneParameters(foundZoneParameters);
     }
 

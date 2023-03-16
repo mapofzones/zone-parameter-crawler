@@ -77,6 +77,11 @@ public class RestClient {
         return zoneParametersDto;
     }
 
+    public Long findTotalSupply(List<String> addresses, String denom) {
+        String value = (String) callApi(addresses, String.format(endpointsProperties.getSupply(), denom), "/amount/amount", false, 2).orElse(null);
+        return value != null ? Long.parseLong(value) : null;
+    }
+
     private Integer findActiveValidatorsQuantity(String zone, List<String> addresses) {
 
         String value;

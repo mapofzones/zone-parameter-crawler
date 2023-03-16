@@ -35,4 +35,8 @@ public interface ZoneParametersRepository extends JpaRepository<ZoneParameters, 
     @Query(value = "select * from zone_parameters zp where zp.datetime = " +
             "(select zp1.datetime from zone_parameters zp1 ORDER BY zp1.datetime DESC LIMIT 1)", nativeQuery = true)
     List<ZoneParameters> findEmptyZoneParameters();
+
+    @Query(value = "SELECT zp.amount_of_bonded FROM zone_parameters zp " +
+            "WHERE zp.zone = ?1 AND zp.amount_of_bonded IS NOT NULL ORDER BY zp.datetime DESC LIMIT 1", nativeQuery = true)
+    Long getLastKnownBondedTokens(String zone);
 }
