@@ -27,7 +27,7 @@ public class OsmosisParametersService {
         BigDecimal totalSupply = BigDecimal.valueOf(tokenPricesRepository.getLastKnownTotalSupply("osmosis-1", "uosmo"));
         totalSupply = totalSupply.divide(BigDecimal.valueOf(1000000), 0, RoundingMode.HALF_UP);
 
-        BigDecimal inflation = second_year.multiply(calcYearFactor()).divide(totalSupply, 6, RoundingMode.HALF_UP).setScale(2, RoundingMode.DOWN);
+        BigDecimal inflation = second_year.multiply(calcYearFactor()).divide(totalSupply, 6, RoundingMode.HALF_UP).setScale(4, RoundingMode.DOWN);
         foundZoneParameters.setInflation(inflation.doubleValue());
     }
 
