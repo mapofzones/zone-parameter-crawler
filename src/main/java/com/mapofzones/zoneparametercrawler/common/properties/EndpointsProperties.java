@@ -11,6 +11,7 @@ public class EndpointsProperties {
 
     private String inflation;
     private String activeValidatorsQuantity;
+    private String activeValidatorsQuantityLegacy;
     private String activeValidatorsQuantityExtra;
     private String allValidatorsQuantity;
     private String activeValidatorList;

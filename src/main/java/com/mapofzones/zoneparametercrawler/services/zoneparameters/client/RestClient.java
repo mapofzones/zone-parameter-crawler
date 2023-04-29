@@ -89,7 +89,10 @@ public class RestClient {
         if (zone.equals("stride-1")) {
             value = (String) callApi(List.of("https://stride.nodejumper.io"), "/validators", "/result/total", false, 1).orElse(null);
         } else {
-            value = (String) callApi(addresses, endpointsProperties.getActiveValidatorsQuantity(), "/result/total", false, 2).orElse(null);
+            value = (String) callApi(addresses, endpointsProperties.getActiveValidatorsQuantityLegacy(), "/result/total", false, 2).orElse(null);
+            if (value == null) {
+                value = (String) callApi(addresses, endpointsProperties.getActiveValidatorsQuantity(), "/pagination/total", false, 2).orElse(null);
+            }
             if (value == null)
                 value = (String) callApi(addresses, endpointsProperties.getActiveValidatorsQuantityExtra(), "/pagination/total", false, 2).orElse(null);
         }
