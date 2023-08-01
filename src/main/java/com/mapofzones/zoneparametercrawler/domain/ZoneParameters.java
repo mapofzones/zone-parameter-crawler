@@ -81,7 +81,7 @@ public class ZoneParameters {
         if (zoneParametersDto.getDelegatorShares() != null && !zoneParametersDto.getDelegatorShares().isEmpty()) {
             BigDecimal amountShares = BigDecimal.ZERO;
             for (Map.Entry<String, String> curretEntry : zoneParametersDto.getDelegatorShares().entrySet()) {
-                if (curretEntry != null) {
+                if (curretEntry != null && curretEntry.getValue()!= null) {
                     amountShares = amountShares.add(BigDecimal.valueOf(Double.parseDouble(curretEntry.getValue())));
                 }
             }

@@ -35,7 +35,7 @@ public class ZoneParametersFacade implements IZoneParametersFacade {
     @Transactional
     public void createEmptyZoneParameters() {
         log.info("Start CreateEmptyZoneParameters...");
-        List<Zone> zones = zoneRepository.getZoneByIsMainnetTrueOrIsZoneNew();
+        List<Zone> zones = zoneRepository.getZoneByIsMainnetTrueOrIsZoneNewTrue();
         List<ZoneParameters> zoneParameters = new ArrayList<>();
 
         zones.forEach(zone -> {
