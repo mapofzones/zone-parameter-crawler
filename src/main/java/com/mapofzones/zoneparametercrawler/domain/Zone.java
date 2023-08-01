@@ -22,4 +22,7 @@ public class Zone {
 
     @Column(name = "is_mainnet")
     private Boolean isMainnet;
+
+    @Column(name = "is_zone_new")
+    private Boolean isZoneNew;
 }

@@ -15,6 +15,6 @@ public interface ZoneRepository extends JpaRepository<Zone, String> {
             "        AND zn.is_lcd_addr_active = true order by zn.last_block_height DESC LIMIT 5", nativeQuery = true)
     List<String> findRestAddressesWithHightestBlockByChainId(String chainId);
 
-    List<Zone> getZoneByIsMainnetTrue();
+    List<Zone> getZoneByIsMainnetTrueOrIsZoneNew();
 
 }
