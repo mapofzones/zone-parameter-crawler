@@ -5,6 +5,7 @@ import com.mapofzones.zoneparametercrawler.services.ZoneParametersFacade;
 import com.mapofzones.zoneparametercrawler.services.ZoneParametersFacadeProxy;
 import com.mapofzones.zoneparametercrawler.services.tokenprices.TokenPricesRepository;
 import com.mapofzones.zoneparametercrawler.services.zone.ZoneRepository;
+import com.mapofzones.zoneparametercrawler.services.zoneparameters.CelestiaParametersService;
 import com.mapofzones.zoneparametercrawler.services.zoneparameters.IZoneParametersService;
 import com.mapofzones.zoneparametercrawler.services.zoneparameters.OsmosisParametersService;
 import com.mapofzones.zoneparametercrawler.services.zoneparameters.ZoneParametersRepository;
@@ -19,8 +20,9 @@ public class ZoneParametersCrawlerConfig {
     @Bean
     public IZoneParametersService zoneParametersService(ZoneParametersRepository zoneParametersRepository,
                                                         OsmosisParametersService osmosisParametersService,
+                                                        CelestiaParametersService celestiaParametersService,
                                                         RestClient restClient) {
-        return new ZoneParametersService(zoneParametersRepository, osmosisParametersService, restClient);
+        return new ZoneParametersService(zoneParametersRepository, osmosisParametersService, celestiaParametersService, restClient);
     }
 
     @Bean
@@ -28,6 +30,13 @@ public class ZoneParametersCrawlerConfig {
                                                              TokenPricesRepository tokenPricesRepository,
                                                              RestClient restClient) {
         return new OsmosisParametersService(zoneParametersRepository, tokenPricesRepository, restClient);
+    }
+
+    @Bean
+    public CelestiaParametersService celestiaParametersService(ZoneParametersRepository zoneParametersRepository,
+                                                             TokenPricesRepository tokenPricesRepository,
+                                                             RestClient restClient) {
+        return new CelestiaParametersService(restClient);
     }
 
     @Bean

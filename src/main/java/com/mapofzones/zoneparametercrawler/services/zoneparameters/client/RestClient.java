@@ -214,7 +214,7 @@ public class RestClient {
 
     }
 
-    private Optional<Object> callApi(List<String> addresses, String endpoint, String jsonPath, boolean multipleValue, int tryingCall) {
+    public Optional<Object> callApi(List<String> addresses, String endpoint, String jsonPath, boolean multipleValue, int tryingCall) {
 
         List<URI> uris = addresses.stream().map(addr -> URI.create(addr + endpoint)).collect(Collectors.toList());
 
