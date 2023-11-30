@@ -14,15 +14,18 @@ public class ZoneParametersService implements IZoneParametersService {
     private final ZoneParametersRepository zoneParametersRepository;
     private final OsmosisParametersService osmosisParametersService;
     private final CelestiaParametersService celestiaParametersService;
+    private final CarbonParametersService carbonParametersService;
     private final RestClient restClient;
 
     public ZoneParametersService(ZoneParametersRepository zoneParametersRepository,
                                  OsmosisParametersService osmosisParametersService,
                                  CelestiaParametersService celestiaParametersService,
+                                 CarbonParametersService carbonParametersService,
                                  RestClient restClient) {
         this.zoneParametersRepository = zoneParametersRepository;
         this.osmosisParametersService = osmosisParametersService;
         this.celestiaParametersService = celestiaParametersService;
+        this.carbonParametersService = carbonParametersService;
         this.restClient = restClient;
     }
 
@@ -82,6 +85,10 @@ public class ZoneParametersService implements IZoneParametersService {
 
         if (zoneParameters.getZoneParametersId().getZone().equals("celestia")) {
             celestiaParametersService.calculateInflation(foundZoneParameters, addresses);
+        }
+
+        if (zoneParameters.getZoneParametersId().getZone().equals("carbon-1")) {
+            carbonParametersService.calculateInflation(foundZoneParameters, addresses);
         }
 
         zoneParameters.setBaseZoneParameters(foundZoneParameters);
