@@ -123,7 +123,7 @@ public class RestClient {
     private Map<String, List<String>> findDelegatorAddressesOfAllValidators(List<String> addresses, List<String> validatorAddresses) {
         Map<String, List<String>> delegationsAddressesOfAllValidatorsMap = new HashMap<>();
 
-        ForkJoinPool forkJoinPool = new ForkJoinPool(50);
+        ForkJoinPool forkJoinPool = new ForkJoinPool(5);
 
         Runnable doWork = () -> validatorAddresses.stream().parallel().forEach(vAddr -> {
             List<String> delegatorAddressesOfValidator = (List<String>) callApi(addresses,
@@ -147,7 +147,7 @@ public class RestClient {
     private Map<String, List<String>> findUndelegationsAddressesOfActiveValidators(List<String> addresses, List<String> validatorAddresses) {
         Map<String, List<String>> undelegationsAddressesOfActiveValidatorsMap = new HashMap<>();
 
-        ForkJoinPool forkJoinPool = new ForkJoinPool(50);
+        ForkJoinPool forkJoinPool = new ForkJoinPool(5);
 
         Runnable doWork = () -> validatorAddresses.stream().parallel().forEach(vAddr -> {
             List<String> amount1 = (List<String>) callApi(addresses,
